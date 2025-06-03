@@ -4,7 +4,7 @@ This project implements a **ResNet-based deep learning pipeline** for colorizing
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 ├── Data_Loading.ipynb                         # Loads voxel and label data from NWB files
@@ -39,6 +39,7 @@ We use voxel data from NWB files, including:
 <p align="left">
   <img src="img/11.png" width="400"/>
 </p>
+> 3D structural visualization of the *C. elegans* brain volume before grid conversion.
 
 ### 2D Projections
 
@@ -46,7 +47,10 @@ We use voxel data from NWB files, including:
   <img src="img/2.png" width="300" style="margin-right:20px;"/>
   <img src="img/3.png" width="300"/>
 </p>
+> Left: Color intensity scatterplots in RG, RB, GB subspaces  
+> Right: Spatial neuron distributions projected in XY and XZ planes.
 
+---
 
 ### Grid Mapping
 
@@ -55,34 +59,40 @@ Voxel coordinates `(xr, yr)` are mapped to a **2D grid** of either `64×64` or `
   `Gray = 0.299 * R + 0.587 * G + 0.114 * B`
 - **Channel 2**: Voxel `weight`
 
-Grid Resolution Comparison
+#### Grid Resolution Comparison
 
 <p align="left">
   <img src="img/5.png" width="800"/>
 </p>
+> Grid representation using 64×64 resolution for lower computational cost.
 
 <p align="left">
   <img src="img/6.png" width="800"/>
 </p>
+> Grid representation using 128×128 resolution for finer spatial detail.
 
+---
 
 ### Auxiliary Feature
 
 - The scalar `zr` is processed using a fully connected branch and expanded spatially to match the grid dimensions.
+
+---
 
 ### Normalization
 
 - RGB and weight values are **globally normalized** across all datasets.
 - Spatial coordinates `(xr, yr, zr)` are **individually normalized** within each dataset to preserve structure.
 
-#### 2D Projections of Normalized Data (XY Plane)
+#### Normalized 2D XY Projections
 <p align="center">
   <img src="img/4.png" width="700"/>
 </p>
+> 2D projections of normalized voxel data across XY plane for all datasets.
 
 ---
 
-## 📊 Baseline Comparison
+## Baseline Comparison
 
 We compared classification accuracy using traditional Random Forest classifiers on two feature sets:
 
@@ -102,6 +112,8 @@ We compared classification accuracy using traditional Random Forest classifiers 
 - Fusion of ResNet and auxiliary features via **channel concatenation**
 - Final convolutional layers predict **3-channel RGB** output
 
+---
+
 ## Training Configuration
 
 | Component        | Description                                  |
@@ -120,12 +132,16 @@ We compared classification accuracy using traditional Random Forest classifiers 
 | Full Dataset (w/ BG)     | 0.0144  | 0.7300 | 0.1341        |
 | No Background (cleaned)  | 0.0197  | 0.7143 | 0.1565        |
 
+---
 
 ### Loss Curves
 
 <p align="left">
   <img src="img/7.png" width="700"/>
 </p>
+> Training vs. validation MSE loss across epochs shows stable convergence.
+
+---
 
 ### Prediction vs. Ground Truth
 
@@ -144,6 +160,8 @@ We compared classification accuracy using traditional Random Forest classifiers 
   <img src="img/10.png" width="500"/>
 </p>
 
+> Each pair shows ground truth RGB (left) vs. ResNet-predicted RGB (right) on a test slice.
+
 ---
 
 ## Downstream Classification
@@ -158,14 +176,14 @@ Predicted RGB values were used as features in standard classifiers:
 | MLP            | 0.2352   |
 | Logistic Reg.  | 0.2575   |
 
-> Colorization enhances visual data, but **class imbalance** limits classification performance.
+> While colorization improves visual fidelity, **class imbalance** continues to limit classifier accuracy.
 
 ---
 
 ## Conclusion
 
-- **ResNet-18** effectively predicts RGB color from grayscale + spatial inputs.
-- Colorization improves both **visual clarity** and **classification readiness**.
-- Main bottleneck: data scarcity and severe **class imbalance**.
+- **ResNet-18** effectively learns RGB mappings from grayscale + spatial voxel features.
+- Colorization improves interpretability and supports downstream classification.
+- Future improvements require addressing **class imbalance** and exploring **perceptual or adversarial loss**.
 
 ---
